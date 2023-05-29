@@ -102,6 +102,13 @@ const AddWordScreen = () => {
           Word :
         </Text>
         <TextInput
+          style={{
+            color: 'black',
+            borderWidth: 1,
+            width: 200,
+            height: 50,
+            paddingLeft: 10,
+          }}
           placeholder="enter word"
           value={wordname}
           onChangeText={txt => setwordname(txt)}
@@ -117,6 +124,13 @@ const AddWordScreen = () => {
           Meaning :
         </Text>
         <TextInput
+          style={{
+            color: 'black',
+            borderWidth: 1,
+            width: 200,
+            height: 50,
+            paddingLeft: 10,
+          }}
           placeholder="enter word"
           value={meaning}
           onChangeText={txt => setmeaning(txt)}
@@ -210,7 +224,7 @@ const AddWordScreen = () => {
             onPress={() => {
               insertword();
             }}>
-            <Text>Save Word</Text>
+            <Text style={{color: 'black', fontSize: 50}}>Save Word</Text>
           </TouchableOpacity>
         </View>
       </View>

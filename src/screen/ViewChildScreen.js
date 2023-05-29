@@ -67,10 +67,19 @@ const ViewChildScreen = ({navigation}) => {
                     padding: 5,
                     alignSelf: 'center',
                   }}>
-                  <Text>{`${item.name} : ${item.grade}`}</Text>
+                  <Text
+                    style={{
+                      color: 'black',
+                    }}>{`${item.name} : ${item.grade}`}</Text>
                   <View style={{flexDirection: 'row'}}>
-                    <TouchableOpacity style={{borderWidth: 1, marginLeft: 200}}>
-                      <Text>Display</Text>
+                    <TouchableOpacity
+                      style={{borderWidth: 1, marginLeft: 200}}
+                      onPress={() => {
+                        navigation.navigate('ViewKidWords', {
+                          paramkey: item,
+                        });
+                      }}>
+                      <Text style={{color: 'black'}}>Display</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={{borderWidth: 1}}
@@ -79,7 +88,7 @@ const ViewChildScreen = ({navigation}) => {
                           paramkey: item,
                         });
                       }}>
-                      <Text>Add</Text>
+                      <Text style={{color: 'black'}}>Add</Text>
                     </TouchableOpacity>
                   </View>
                 </View>

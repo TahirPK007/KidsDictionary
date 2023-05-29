@@ -12,6 +12,7 @@ import ExerciseScreen from './src/screen/ExerciseScreen';
 import ExerciseByImage from './src/screen/ExerciseByImage';
 import ExerciseByAudio from './src/screen/ExerciseByAudio';
 import ViewWord from './src/screen/ViewWord';
+import ViewKidWords from './src/screen/ViewKidWords';
 
 const Stack = createNativeStackNavigator();
 
@@ -83,6 +84,11 @@ export default function App() {
           <Stack.Screen
             name="ViewWord"
             component={ViewWord}
+            options={{headerShown: true}}
+          />
+          <Stack.Screen
+            name="ViewKidWords"
+            component={ViewKidWords}
             options={{headerShown: true}}
           />
         </Stack.Navigator>

@@ -76,8 +76,10 @@ const AddChlidScreen = () => {
           width: 300,
           paddingLeft: 10,
           borderRadius: 10,
+          color: 'black',
         }}
         placeholder="enter your name"
+        placeholderTextColor={'black'}
         value={name}
         onChangeText={txt => setname(txt)}
       />
@@ -105,7 +107,7 @@ const AddChlidScreen = () => {
           onPress={() => {
             insert();
           }}>
-          <Text>Save Child</Text>
+          <Text style={{color: 'black', fontSize: 50}}>Save Child</Text>
         </TouchableOpacity>
       </View>
     </View>

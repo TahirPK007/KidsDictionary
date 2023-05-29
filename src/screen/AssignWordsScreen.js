@@ -5,6 +5,8 @@ import {
   Pressable,
   ScrollView,
   FlatList,
+  TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {CheckBox} from 'react-native-elements';
 
@@ -50,8 +52,24 @@ const AssignWordsScreen = ({route, navigation}) => {
     });
   };
 
+  const createtable = () => {
+    db.transaction(txn => {
+      txn.executeSql(
+        `create table if not exists kidwords (id integer primary key autoincrement,wordname varchar(50),meaning varchar(500),image BLOB,audio TEXT,grade varchar(50),childid varchar(50))`,
+        [],
+        (sqltxn, res) => {
+          console.log('table created successfully');
+        },
+        error => {
+          console.log('error occured while creating table');
+        },
+      );
+    });
+  };
+
   useEffect(() => {
     fetchwords();
+    createtable();
   }, []);
 
   let anotherArray = [];
@@ -74,7 +92,7 @@ const AssignWordsScreen = ({route, navigation}) => {
   const handleCheckboxPress = item => {
     const modifiedItem = {
       ...item,
-      childId: childid,
+      childid: childid,
     };
 
     if (selectedItems.some(selectedItem => selectedItem.id === item.id)) {
@@ -89,6 +107,24 @@ const AssignWordsScreen = ({route, navigation}) => {
   anotherArray = existingArray.concat(selectedItems);
 
   console.log(anotherArray, 'this array contains data');
+
+  const insertword = () => {
+    db.transaction(txn => {
+      anotherArray.forEach(obj => {
+        const {wordname, meaning, image, audio, grade, childid} = obj;
+        txn.executeSql(
+          `INSERT INTO kidwords(wordname, meaning, image, audio, grade, childid) VALUES (?, ?, ?, ?, ?, ?)`,
+          [wordname, meaning, image, audio, grade, childid],
+          (sqltxn, res) => {
+            console.log('Data added successfully');
+          },
+          error => {
+            console.log('Error occurred while adding data:', error);
+          },
+        );
+      });
+    });
+  };
 
   return (
     <ScrollView style={styles.container1}>
@@ -108,9 +144,12 @@ const AssignWordsScreen = ({route, navigation}) => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <Pressable style={styles.button}>
-          <Text style={styles.buttonText}>Save Word's</Text>
-        </Pressable>
+        <TouchableOpacity
+          onPress={() => {
+            insertword();
+          }}>
+          <Text style={{color: 'black', fontSize: 50}}>Save words</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
