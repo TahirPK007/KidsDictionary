@@ -73,7 +73,15 @@ const ViewChildScreen = ({navigation}) => {
                     }}>{`${item.name} : ${item.grade}`}</Text>
                   <View style={{flexDirection: 'row'}}>
                     <TouchableOpacity
-                      style={{borderWidth: 1, marginLeft: 200}}
+                      style={{
+                        borderWidth: 1,
+                        marginLeft: 10,
+                        width: 50,
+                        height: 25,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginLeft: 200,
+                      }}
                       onPress={() => {
                         navigation.navigate('ViewKidWords', {
                           paramkey: item,
@@ -82,13 +90,36 @@ const ViewChildScreen = ({navigation}) => {
                       <Text style={{color: 'black'}}>Display</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={{borderWidth: 1}}
+                      style={{
+                        borderWidth: 1,
+                        marginLeft: 10,
+                        width: 50,
+                        height: 25,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
                       onPress={() => {
                         navigation.navigate('AssignWordsScreen', {
                           paramkey: item,
                         });
                       }}>
                       <Text style={{color: 'black'}}>Add</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        borderWidth: 1,
+                        marginLeft: 10,
+                        width: 50,
+                        height: 25,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                      onPress={() => {
+                        navigation.navigate('Quiz', {
+                          paramkey: item,
+                        });
+                      }}>
+                      <Text style={{color: 'black'}}>Quiz</Text>
                     </TouchableOpacity>
                   </View>
                 </View>

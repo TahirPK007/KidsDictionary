@@ -13,6 +13,7 @@ import ExerciseByImage from './src/screen/ExerciseByImage';
 import ExerciseByAudio from './src/screen/ExerciseByAudio';
 import ViewWord from './src/screen/ViewWord';
 import ViewKidWords from './src/screen/ViewKidWords';
+import Quiz from './src/screen/Quiz';
 
 const Stack = createNativeStackNavigator();
 
@@ -89,6 +90,11 @@ export default function App() {
           <Stack.Screen
             name="ViewKidWords"
             component={ViewKidWords}
+            options={{headerShown: true}}
+          />
+          <Stack.Screen
+            name="Quiz"
+            component={Quiz}
             options={{headerShown: true}}
           />
         </Stack.Navigator>
