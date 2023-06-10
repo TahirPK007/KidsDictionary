@@ -1,14 +1,6 @@
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  FlatList,
-  Alert,
-} from 'react-native';
 import React, {useEffect, useState} from 'react';
+import {View, Text, Image, TouchableOpacity, Alert} from 'react-native';
 import {openDatabase} from 'react-native-sqlite-storage';
-import Video from 'react-native-video';
 
 const db = openDatabase({name: 'kidsdictionary'});
 
@@ -16,20 +8,18 @@ const Quiz = ({route, navigation}) => {
   const childid = route.params.paramkey.id;
   const kidname = route.params.paramkey.name;
 
-  const [kidsdata, setkidsdata] = useState([]);
+  const [kidsdata, setKidsData] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [selectedOption, setSelectedOption] = useState(null);
-
-  const [RandomOptions, setRandomOptions] = useState([]);
 
   const randomNumber = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
-  const fetchkidwords = childid => {
+  const fetchKidWords = childid => {
     db.transaction(txn => {
       txn.executeSql(
-        `select * from kidwords where childid=?`,
+        `SELECT * FROM kidwords WHERE childid=?`,
         [childid],
         (sqltxn, res) => {
           let resultset = [];
@@ -43,48 +33,52 @@ const Quiz = ({route, navigation}) => {
               image: record.image,
               audio: record.audio,
               grade: record.grade,
+              options: [], // Add an empty options array
             });
           }
-          setkidsdata(resultset);
-
-          console.log('all quiz wordsss are fetched');
+          setKidsData(resultset);
+          console.log('All quiz words are fetched');
         },
         error => {
-          console.log('error occured while fetching employees');
+          console.log('Error occurred while fetching kid words');
         },
       );
     });
   };
 
   useEffect(() => {
-    fetchkidwords(childid);
+    fetchKidWords(childid);
   }, []);
 
   useEffect(() => {
     if (kidsdata.length > 0) {
-      const randomIndex = randomNumber(0, kidsdata.length - 1);
-      const question = kidsdata[randomIndex];
-      setCurrentQuestion(question);
-
-      const options = kidsdata.filter(
-        data => data.wordname !== question.wordname,
-      );
-
-      const randomOptions = [];
-
-      randomOptions.push(question); // Include the correct answer as one of the options
-
-      while (randomOptions.length < 3) {
-        const randomOptionIndex = randomNumber(0, options.length - 1);
-        const randomOption = options[randomOptionIndex];
-        randomOptions.push(randomOption);
-        options.splice(randomOptionIndex, 1);
-      }
-
-      randomOptions.sort(() => Math.random() - 0.5); // Shuffle the options
-      setRandomOptions(randomOptions);
+      generateOptionsForCurrentQuestion();
     }
   }, [kidsdata]);
+
+  const generateOptionsForCurrentQuestion = () => {
+    if (kidsdata.length === 0) {
+      setCurrentQuestion(null);
+      return;
+    }
+
+    const randomIndex = randomNumber(0, kidsdata.length - 1);
+    const question = kidsdata[randomIndex];
+
+    const options = kidsdata
+      .filter(data => data.id !== question.id)
+      .slice(0, 3); // Select three random options
+
+    const randomOptions = [question, ...options];
+
+    randomOptions.sort(() => Math.random() - 0.5); // Shuffle the options
+
+    setCurrentQuestion(prevQuestion => ({
+      ...prevQuestion,
+      ...question,
+      options: randomOptions,
+    }));
+  };
 
   const handleOptionSelect = option => {
     setSelectedOption(option);
@@ -105,28 +99,40 @@ const Quiz = ({route, navigation}) => {
         {
           text: 'Next',
           onPress: () => {
-            // Fetch a new random question
-            if (kidsdata.length > 1) {
-              const remainingQuestions = kidsdata.filter(
-                data => data.id !== currentQuestion.id,
-              );
-              const randomIndex = randomNumber(
-                0,
-                remainingQuestions.length - 1,
-              );
-              setCurrentQuestion(remainingQuestions[randomIndex]);
-              setkidsdata(remainingQuestions);
-            } else {
+            const remainingQuestions = kidsdata.filter(
+              data => data.id !== currentQuestion.id,
+            );
+
+            if (remainingQuestions.length === 0) {
+              // End of quiz
               setCurrentQuestion(null);
-              setkidsdata([]);
+              setKidsData([]);
               console.log('Quiz completed!');
+              return;
             }
+
+            // Fetch a new random question
+            const randomIndex = randomNumber(0, remainingQuestions.length - 1);
+            setCurrentQuestion(remainingQuestions[randomIndex]);
+
+            // Generate options for the new question
+            generateOptionsForCurrentQuestion();
+
+            // Reset selected option
+            setSelectedOption(null);
           },
         },
       ],
       {cancelable: false},
     );
   };
+
+  // Add a useEffect hook to generate options for the new question
+  useEffect(() => {
+    if (currentQuestion === null && kidsdata.length > 0) {
+      generateOptionsForCurrentQuestion();
+    }
+  }, [currentQuestion, kidsdata]);
 
   console.log(kidsdata, 'its quizz kids words');
   return (
@@ -139,11 +145,11 @@ const Quiz = ({route, navigation}) => {
             style={{width: 200, height: 200}}
           />
           <Text>Options:</Text>
-          {kidsdata.map(data => (
+          {currentQuestion.options.slice(0, 3).map(option => (
             <TouchableOpacity
-              key={data.id}
-              onPress={() => handleOptionSelect(data.wordname)}>
-              <Text>{data.wordname}</Text>
+              key={option.id}
+              onPress={() => handleOptionSelect(option.wordname)}>
+              <Text>{option.wordname}</Text>
             </TouchableOpacity>
           ))}
         </View>
